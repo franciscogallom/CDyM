@@ -1,5 +1,6 @@
 #include "sEOS.h"
 #include "MEF.h"
+#include "WATCH.h"
 
 uint8_t FLAG_WATCH = 0;
 uint8_t FLAG_MEF = 0;
@@ -20,7 +21,7 @@ ISR(TIMER0_COMPA_vect){ //Tisr = 250/62500 -> 4 ms
 	
 	
 	//Actualizo cada 100 ms flag para leer matriz
-	if(++count_MEF == 125) {  //Si cada 4 ms realiza la rutina de interrupcion y quiero actualizar el estado de la MEF cada 500 ms -> 500ms/4ms = 125
+	if(++count_MEF == 25) {  //Si cada 4 ms realiza la rutina de interrupcion y quiero actualizar el estado de la MEF cada 100 ms -> 100ms/4ms = 25
 		FLAG_MEF = 1;
 	} 
 	if(++count_WATCH == 250 ){  //Si quiero actualizar el reloj cada 1s -> 1000ms/4ms = 250
@@ -32,12 +33,12 @@ ISR(TIMER0_COMPA_vect){ //Tisr = 250/62500 -> 4 ms
 void sEOS_Dispatch_Tasks(){
 	if (FLAG_WATCH)
 	{
-		WATCH_Update();
+		WATCH_update();
 		FLAG_WATCH = 0;
 	}
 	if (FLAG_MEF)
 	{
-		MEF_Update();
+		MEF_update();
 		FLAG_MEF = 0;
 		
 	}
