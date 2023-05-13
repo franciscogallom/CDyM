@@ -8,7 +8,7 @@ const uint8_t matriz [4][4] = {	'A', '1', '3', '2',
 
 
 
-uint8_t KEYPAD_update(uint8_t *key){
+uint8_t KEYPAD_Scan(uint8_t *key){
 		// Entradas
 		DDRB &= (0b11100110);
 		DDRD &= (0b01111111);

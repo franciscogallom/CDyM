@@ -1,14 +1,13 @@
-
+#include "common.h"
 #include "lcd.h"
 #include "string.h"
 #include "MEF.h"
 
 static state estado;
-static call_count;
+static uint8_t call_count;
 static uint8_t key;
 static uint8_t pos;
 char password[4];
- 
  
 //Funcion privada
 static void resetCallCountAndGoToState(uint8_t callCount, state st){
@@ -30,7 +29,7 @@ static uint8_t isCorrectPassword(char pass[4]){
 }
 
 //Funcion privada
-static uint8_t MEF_readKey(uint8_t pos)){
+static uint8_t MEF_readKey(uint8_t pos){
 	if(KEYPAD_Scan(&key)){ //Cada 100 ms
 		return 0;
 		}else{
@@ -42,28 +41,28 @@ static uint8_t MEF_readKey(uint8_t pos)){
 
 static void handleInicio(char pass[]){
 	switch(pass[0]){
-		case "A":
+		case 'A':
 			estado = EdicionH;
 			call_count = 0;
 			break;
-		case "B":
+		case 'B':
 			estado = EdicionM;
 			call_count = 0;
 			break;
-		case "C":
+		case 'C':
 			estado = EdicionS;
 			call_count = 0;
 			break;
-		case "0":
-		case "1":
-		case "2":
-		case "3":
-		case "4":
-		case "5":
-		case "6":
-		case "7":
-		case "8":
-		case "9":
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
 			estado = D0;
 			call_count = 0;
 			break;
@@ -147,16 +146,16 @@ void MEF_update(){ //Update cada 100 ms
 			break;
 		
 		case EdicionH:
-		
-		break;
+			printf("EdicionH");
+			break;
 		
 		case EdicionM:
-		
-		break;
+			printf("EdicionM");
+			break;
 		
 		case EdicionS:
-		
-		break;
+			printf("EdicionS");
+			break;
 		
 	}
 	
