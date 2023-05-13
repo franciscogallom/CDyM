@@ -6,34 +6,37 @@
 
 static state estado;
 static uint8_t call_count;
+static uint8_t call_count_keypad;
 static uint8_t key;
 static uint8_t pos;
-char password[4];
-uint8_t data[2];
-uint8_t dataCount = 0;
+static uint8_t password[4]; //Utilizar uint8
+static uint8_t data[2];
+static uint8_t dataCount = 0;
+static uint8_t num;
  
 //Funcion privada
 static void resetCallCountAndGoToState(uint8_t callCount, state st){
 		if (call_count == callCount)
 		{
+			LCDclr();
 			call_count = 0;
 			estado = st;
 		}
 }
 
 //Funcion privada 
-static uint8_t isCorrectPassword(char pass[4]){
-	char *inputPassword = "5913";
-	if (strcmp(pass, inputPassword) == 0) {
+static uint8_t isCorrectPassword(uint8_t * pass){
+	
+	if((pass[0] == '5') && (pass[1] == '9') && (pass[2] == '1') && (pass[3] == '3')){
 		return 1;
 	} else {
 		return 0;
 	}
 }
 
-//Funcion privada
+//Funcion privada 
 static uint8_t MEF_readKey(uint8_t pos){
-	if(KEYPAD_Scan(&key)){ //Cada 100 ms
+	if(!(KEYPAD_Scan(&key))){ //Cada 100 ms
 		return 0;
 		}else{
 			password[pos] = key;
@@ -42,7 +45,7 @@ static uint8_t MEF_readKey(uint8_t pos){
 	
 }
 
-static void handleInicio(char pass[]){
+static void handleInicio(uint8_t * pass){
 	switch(pass[0]){
 		case 'A':
 			estado = EdicionH;
@@ -75,7 +78,7 @@ static void handleInicio(char pass[]){
 }
 
 void MEF_init(){
-	estado = Correcto;
+	estado = Inicio;
 	call_count = 0;
 	/**LCDGotoXY(5, 0);
 	LCDescribeDato(WATCH_getSeg(), 2);
@@ -94,40 +97,79 @@ void MEF_update(){ //Update cada 100 ms
 	{
 		case Inicio:
 			// Muestro la hora y el mensaje "CERRADO".
-			LCDGotoXY(5, 0);
-			LCDescribeDato(call_count, 2);
+			LCDGotoXY(4, 0);
+			LCDescribeDato(WATCH_getHour(), 2);
 			LCDsendChar(':');
 			LCDescribeDato(WATCH_getMin(), 2);
 			LCDsendChar(':');
-			LCDescribeDato(WATCH_getHour(), 2);
+			LCDescribeDato(WATCH_getSeg(), 2);
 			LCDGotoXY(5, 1);
 			LCDstring("CERRADO", 7);
 			
 			// Detectar que se presiono una tecla.
-			MEF_readKey(0);
-			handleInicio(password[0]);
+			if(MEF_readKey(0)){
+				handleInicio(password[0]);
+			}
+			
+			
 			break;
 		
 		case D0:
-			MEF_readKey(1);
+			LCDclr();
+			LCDGotoXY(5,1);
+			//LCDsendChar('*');
+			LCDsendChar(password[0]);
+			if (++call_count_keypad == 3)
+			{
+				if(MEF_readKey(1)){
+					call_count = 0;
+					estado = D1;
+				}
+				call_count_keypad = 0;
+			}
+			
 			resetCallCountAndGoToState(30, Inicio); //Si pasaron 3 sg y no se leyo ninguna tecla, vuelve al estado Inicio.
 			break;
 		
 		case D1:
-			MEF_readKey(2);
+			LCDGotoXY(6,1);
+			//LCDsendChar('*');
+			LCDsendChar(password[1]);
+				if (++call_count_keypad == 3)
+				{
+					if(MEF_readKey(2)){
+						call_count = 0;
+						estado = D2;
+					}
+					call_count_keypad = 0;
+				}
 			resetCallCountAndGoToState(30, Inicio);
 			break;
 		
 		case D2:
-			MEF_readKey(3);
+			LCDGotoXY(7,1);
+			//LCDsendChar('*');
+			LCDsendChar(password[2]);
+				if (++call_count_keypad == 3)
+				{
+					if(MEF_readKey(3)){
+						call_count = 0;
+						estado = D3;
+					}
+					call_count_keypad = 0;
+				}
 			resetCallCountAndGoToState(30, Inicio);
 			break;
 		
 		case D3:
 			// Al llegar a este estado, ya tengo los 4 caracteres ingresados.
+			LCDGotoXY(8,1);
+			LCDsendChar(password[3]);
 			if (isCorrectPassword(password)) {
+				call_count = 0;
 				estado = Correcto;
 			} else {
+				call_count = 0;
 				estado = Incorrecto;
 			}
 			break;
@@ -153,7 +195,7 @@ void MEF_update(){ //Update cada 100 ms
 				switch(key){
 					case 'A':
 						// Guardar
-						uint8_t num = data[0] * 10 + data[1];
+						num = data[0] * 10 + data[1];
 						// dataCount == 3 significa que el usuario ingreso dos numeros + tecla para guardar.
 						if (dataCount == 3) {
 							if (num >= 0 && num <= 23) {

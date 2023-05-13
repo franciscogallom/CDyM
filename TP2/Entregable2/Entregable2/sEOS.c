@@ -15,7 +15,7 @@ void TIMER0_Init(){
 	//configuración del TOPE del contador TCNT0
 	OCR0A=249;			//250
 	TCCR0A =(1<<COM0A0) | (1<<WGM01); //modo CTC, Toggle on compare match
-	TCCR0B |= (1 << CS02) | (1 << CS00); //16Mhz / 256 = 62,5kHz
+	TCCR0B |= (1 << CS02); //16Mhz / 256 = 62,5kHz
 	TIMSK0 =(1<<OCIE0A); // habilitamos interrupución COMPA
 	sei(); //Habilito las interrupciones	
 	

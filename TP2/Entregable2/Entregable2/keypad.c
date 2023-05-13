@@ -1,11 +1,10 @@
 #include "keypad.h"
 
-const uint8_t matriz [4][4] = {	'A', '1', '3', '2',
-	'B', '4', '6', '5',
-	'C', '7', '9', '8',
-	'D', '0', '#' ,'*'
-};
-
+static uint8_t matriz [4][4] = {	'A', '1', '3', '2', 
+									'B', '4', '6', '5', 
+									'C', '7', '9', '8', 
+									'D', '0', '#' ,'*'
+								};
 
 
 uint8_t KEYPAD_Scan(uint8_t *key){

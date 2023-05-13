@@ -20,7 +20,7 @@ MEF.d MEF.o: .././MEF.c .././common.h \
  .././lcd.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\pgmspace.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h \
- .././MEF.h .././keypad.h
+ .././MEF.h .././keypad.h .././WATCH.h
 
 .././common.h:
 
@@ -69,3 +69,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 .././MEF.h:
 
 .././keypad.h:
+
+.././WATCH.h:
