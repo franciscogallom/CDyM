@@ -1,7 +1,13 @@
 #include "WATCH.h"
+#include <avr/interrupt.h>
+#define F_CPU 16000000UL
+#include <util/delay.h>
+#include <stdint.h>
+#include <stdlib.h>s
 
-static seg, min, hour;
-
+static uint8_t seg;
+static uint8_t min;
+static uint8_t hour;
 void update_WATCH(){
 
 	// Verificar si se ha alcanzado 1 minuto

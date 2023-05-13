@@ -1,15 +1,14 @@
-#ifndef 
+#ifndef sEOS
 #define sEOS
 
-#include <avr/interrupt.h>
-#include <avr/io.h>
+#include "common.h"
 
 
 void TIMER0_Init(void);
 
 void MEF_update();
 
-ISR(TIMER0_COMPA_vect);
+//ISR(TIMER0_COMPA_vect);
 
 void sEOS_Dispatch_Tasks(void);
 

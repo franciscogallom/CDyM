@@ -4,9 +4,13 @@
 
 keypad.c
 
+lcd.c
+
 main.c
 
 MEF.c
 
 sEOS.c
+
+WATCH.c
 

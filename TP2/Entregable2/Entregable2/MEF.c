@@ -1,8 +1,10 @@
+
 #include "lcd.h"
 #include "string.h"
+#include "MEF.h"
 
 static state estado;
-static call_count = 0;
+static call_count;
 static uint8_t key;
 static uint8_t pos;
 char password[4];
@@ -38,7 +40,7 @@ static uint8_t MEF_readKey(uint8_t pos)){
 	
 }
 
-static void handleInicio(char pass[4]){
+static void handleInicio(char pass[]){
 	switch(pass[0]){
 		case "A":
 			estado = EdicionH;
@@ -72,6 +74,15 @@ static void handleInicio(char pass[4]){
 
 void MEF_init(){
 	estado = Inicio;
+	call_count = 0;
+	LCDGotoXY(5, 0);
+	LCDescribeDato(WATCH_getSeg(), 2);
+	LCDsendChar(':');
+	LCDescribeDato(WATCH_getMin(), 2);
+	LCDsendChar(':');
+	LCDescribeDato(WATCH_getHour(), 2);
+	LCDGotoXY(5, 1);
+	LCDstring("CERRADO", 7);
 }
 
 void MEF_update(){ //Update cada 100 ms

@@ -2,6 +2,12 @@
 #include "MEF.h"
 #include "WATCH.h"
 
+#include <avr/interrupt.h>
+#define F_CPU 16000000UL
+#include <util/delay.h>
+#include <stdint.h>	
+#include <stdlib.h>	
+
 uint8_t FLAG_WATCH = 0;
 uint8_t FLAG_MEF = 0;
 void TIMER0_Init(){

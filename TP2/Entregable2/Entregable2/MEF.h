@@ -1,8 +1,8 @@
-#ifndef 
+#ifndef MEF
 
 #define MEF
 #include "keypad.h"
-#include "MEF.h"
+#include "common.h"
 
 const typedef enum {Inicio, D0, D1, D2, D3, Correcto, Incorrecto, EdicionH, EdicionM, EdicionS} state;
 

@@ -1,5 +1,7 @@
-#ifndef 
+#ifndef WATCH
 #define WATCH
+
+#include "common.h"
 
 void WATCH_update();
 

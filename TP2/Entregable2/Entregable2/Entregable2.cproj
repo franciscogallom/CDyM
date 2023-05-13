@@ -147,6 +147,12 @@
     <Compile Include="sEOS.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="WATCH.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="WATCH.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
