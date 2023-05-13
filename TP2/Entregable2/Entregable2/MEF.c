@@ -2,12 +2,15 @@
 #include "lcd.h"
 #include "string.h"
 #include "MEF.h"
+#include "WATCH.h"
 
 static state estado;
 static uint8_t call_count;
 static uint8_t key;
 static uint8_t pos;
 char password[4];
+uint8_t data[2];
+uint8_t dataCount = 0;
  
 //Funcion privada
 static void resetCallCountAndGoToState(uint8_t callCount, state st){
@@ -72,16 +75,16 @@ static void handleInicio(char pass[]){
 }
 
 void MEF_init(){
-	estado = Inicio;
+	estado = Correcto;
 	call_count = 0;
-	LCDGotoXY(5, 0);
+	/**LCDGotoXY(5, 0);
 	LCDescribeDato(WATCH_getSeg(), 2);
 	LCDsendChar(':');
 	LCDescribeDato(WATCH_getMin(), 2);
 	LCDsendChar(':');
 	LCDescribeDato(WATCH_getHour(), 2);
 	LCDGotoXY(5, 1);
-	LCDstring("CERRADO", 7);
+	LCDstring("CERRADO", 7);**/
 }
 
 void MEF_update(){ //Update cada 100 ms
@@ -92,7 +95,7 @@ void MEF_update(){ //Update cada 100 ms
 		case Inicio:
 			// Muestro la hora y el mensaje "CERRADO".
 			LCDGotoXY(5, 0);
-			LCDescribeDato(WATCH_getSeg(), 2);
+			LCDescribeDato(call_count, 2);
 			LCDsendChar(':');
 			LCDescribeDato(WATCH_getMin(), 2);
 			LCDsendChar(':');
@@ -146,7 +149,33 @@ void MEF_update(){ //Update cada 100 ms
 			break;
 		
 		case EdicionH:
-			printf("EdicionH");
+			if (KEYPAD_Scan(&key)){
+				switch(key){
+					case 'A':
+						// Guardar
+						uint8_t num = data[0] * 10 + data[1];
+						// dataCount == 3 significa que el usuario ingreso dos numeros + tecla para guardar.
+						if (dataCount == 3) {
+							if (num >= 0 && num <= 23) {
+								WATCH_setHour(num);	
+							}	
+						}
+						dataCount = 0;
+						estado = Inicio;
+						break;
+					case '#':
+						// Cancelar.
+						estado = Inicio;
+						dataCount = 0;
+						break;
+					default:
+						if(key >= '0' && key <= '9' && dataCount < 2) {
+							data[dataCount] = key;
+						}	
+				}
+				dataCount++;
+			}
+			
 			break;
 		
 		case EdicionM:

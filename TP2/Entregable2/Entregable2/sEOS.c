@@ -29,9 +29,11 @@ ISR(TIMER0_COMPA_vect){ //Tisr = 250/62500 -> 4 ms
 	//Actualizo cada 100 ms flag para leer matriz
 	if(++count_MEF == 25) {  //Si cada 4 ms realiza la rutina de interrupcion y quiero actualizar el estado de la MEF cada 100 ms -> 100ms/4ms = 25
 		FLAG_MEF = 1;
+		count_MEF=0;
 	} 
 	if(++count_WATCH == 250 ){  //Si quiero actualizar el reloj cada 1s -> 1000ms/4ms = 250
 		FLAG_WATCH = 1;
+		count_WATCH=0;
 	}
  
 }
