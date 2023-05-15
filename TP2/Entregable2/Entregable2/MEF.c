@@ -49,30 +49,33 @@ static void handleInicio(uint8_t * pass){
 	switch(pass[0]){
 		case 'A':
 			estado = EdicionH;
+			LCDGotoXY(4,0);
 			call_count = 0;
 			break;
 		case 'B':
 			estado = EdicionM;
+			LCDGotoXY(7,0);
 			call_count = 0;
 			break;
 		case 'C':
 			estado = EdicionS;
+			LCDGotoXY(10,0);
 			call_count = 0;
 			break;
 		case 'D':
 			estado = Inicio;
 			call_count = 0;
 			break;
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
-		case 9:
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
 			estado = D0;
 			call_count = 0;
 			break;
@@ -85,14 +88,15 @@ static void handleInicio(uint8_t * pass){
 void MEF_init(){
 	estado = Inicio;
 	call_count = 0;
-	/**LCDGotoXY(5, 0);
+	LCDclr();
+	LCDGotoXY(4, 0);
 	LCDescribeDato(WATCH_getSeg(), 2);
 	LCDsendChar(':');
 	LCDescribeDato(WATCH_getMin(), 2);
 	LCDsendChar(':');
 	LCDescribeDato(WATCH_getHour(), 2);
 	LCDGotoXY(5, 1);
-	LCDstring("CERRADO", 7);**/
+	LCDstring("CERRADO", 7);
 }
 
 void MEF_update(){ //Update cada 100 ms
@@ -112,9 +116,14 @@ void MEF_update(){ //Update cada 100 ms
 			LCDstring("CERRADO", 7);
 			
 			// Detectar que se presiono una tecla.
-			if(MEF_readKey(0)){
-				handleInicio(password[0]);
+			if (++call_count_keypad == 3)
+			{
+				if(MEF_readKey(0)){
+					handleInicio(password);
+				}
+				call_count_keypad = 0;
 			}
+			
 			
 			
 			break;
@@ -122,8 +131,8 @@ void MEF_update(){ //Update cada 100 ms
 		case D0:
 			LCDclr();
 			LCDGotoXY(5,1);
-			//LCDsendChar('*');
-			LCDsendChar(password[0]);
+			LCDsendChar('*');
+			//LCDsendChar(password[0]);
 			if (++call_count_keypad == 3)
 			{
 				if(MEF_readKey(1)){
@@ -138,8 +147,8 @@ void MEF_update(){ //Update cada 100 ms
 		
 		case D1:
 			LCDGotoXY(6,1);
-			//LCDsendChar('*');
-			LCDsendChar(password[1]);
+			LCDsendChar('*');
+			//LCDsendChar(password[1]);
 				if (++call_count_keypad == 3)
 				{
 					if(MEF_readKey(2)){
@@ -153,8 +162,8 @@ void MEF_update(){ //Update cada 100 ms
 		
 		case D2:
 			LCDGotoXY(7,1);
-			//LCDsendChar('*');
-			LCDsendChar(password[2]);
+			LCDsendChar('*');
+			//LCDsendChar(password[2]);
 				if (++call_count_keypad == 3)
 				{
 					if(MEF_readKey(3)){
@@ -197,13 +206,14 @@ void MEF_update(){ //Update cada 100 ms
 		
 		case EdicionH:
 			if(++call_count_keypad == 3){
-				if(KEYPAD_Scan(&key)){
-					switch(key){
+				call_count_keypad = 0;;
+				if(MEF_readKey(0)){
+					switch(password[0]){
 						case 'A':
 							// Guardar
-							num = data[0] * 10 + data[1];
-							// dataCount == 3 significa que el usuario ingreso dos numeros + tecla para guardar.
-							if (dataCount == 3) {
+							num = ( ((data[0] - '0')* 10) + (data[1] - '0'));
+							// dataCount == 2 significa que el usuario ingreso dos numeros
+							if (dataCount == 2) {
 								if (num >= 0 && num <= 23) {
 									WATCH_setHour(num);	
 								}	
@@ -216,22 +226,123 @@ void MEF_update(){ //Update cada 100 ms
 						estado = Inicio;
 						dataCount = 0;
 						break;
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '5':
+					case '6':
+					case '7':
+					case '8':
+					case '9':
+						if(dataCount < 2) {
+							data[dataCount] = password[0];
+							LCDsendChar(data[dataCount]);
+							dataCount++;
+						}
+						break;
 					default:
-						if(key >= '0' && key <= '9' && dataCount < 2) {
-							data[dataCount] = key;
-						}	
+					
+						break;
 					}
-				dataCount++;
 				}
+				call_count_keypad == 0;
 			}
 			break;
 				
 		case EdicionM:
-			//LCDstring("edicionM",8);
-			break;
+		if(++call_count_keypad == 3){
+			call_count_keypad = 0;;
+			if(MEF_readKey(0)){
+				switch(password[0]){
+					case 'B':
+					// Guardar
+					num = ( ((data[0] - '0')* 10) + (data[1] - '0'));
+					// dataCount == 2 significa que el usuario ingreso dos numeros
+					if (dataCount == 2) {
+						if (num >= 0 && num <= 59) {
+							WATCH_setMinutes(num);
+						}
+					}
+					dataCount = 0;
+					estado = Inicio;
+					break;
+					case '#':
+					// Cancelar.
+					estado = Inicio;
+					dataCount = 0;
+					break;
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '5':
+					case '6':
+					case '7':
+					case '8':
+					case '9':
+					if(dataCount < 2) {
+						data[dataCount] = password[0];
+						LCDsendChar(data[dataCount]);
+						dataCount++;
+					}
+					break;
+					default:
+					
+					break;
+				}
+			}
+			call_count_keypad == 0;
+		}
+		break;
 		
 		case EdicionS:
-			//LCDstring("edicionS",8);
+		if(++call_count_keypad == 3){
+			call_count_keypad = 0;;
+			if(MEF_readKey(0)){
+				switch(password[0]){
+					case 'C':
+					// Guardar
+					num = ( ((data[0] - '0')* 10) + (data[1] - '0'));
+					// dataCount == 2 significa que el usuario ingreso dos numeros
+					if (dataCount == 2) {
+						if (num >= 0 && num <= 59) {
+							WATCH_setSeconds(num);
+						}
+					}
+					dataCount = 0;
+					estado = Inicio;
+					break;
+					case '#':
+					// Cancelar.
+					estado = Inicio;
+					dataCount = 0;
+					break;
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '5':
+					case '6':
+					case '7':
+					case '8':
+					case '9':
+					if(dataCount < 2) {
+						data[dataCount] = password[0];
+						LCDsendChar(data[dataCount]);
+						dataCount++;
+					}
+					break;
+					default:
+					
+					break;
+				}
+			}
+			call_count_keypad == 0;
+		}
 			break;
 		
 	}
