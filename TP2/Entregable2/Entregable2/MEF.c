@@ -59,6 +59,10 @@ static void handleInicio(uint8_t * pass){
 			estado = EdicionS;
 			call_count = 0;
 			break;
+		case 'D':
+			estado = Inicio;
+			call_count = 0;
+			break;
 		case 0:
 		case 1:
 		case 2:
@@ -73,6 +77,7 @@ static void handleInicio(uint8_t * pass){
 			call_count = 0;
 			break;
 		default:
+			
 			break;
 	}
 }
@@ -191,19 +196,20 @@ void MEF_update(){ //Update cada 100 ms
 			break;
 		
 		case EdicionH:
-			if (KEYPAD_Scan(&key)){
-				switch(key){
-					case 'A':
-						// Guardar
-						num = data[0] * 10 + data[1];
-						// dataCount == 3 significa que el usuario ingreso dos numeros + tecla para guardar.
-						if (dataCount == 3) {
-							if (num >= 0 && num <= 23) {
-								WATCH_setHour(num);	
-							}	
-						}
-						dataCount = 0;
-						estado = Inicio;
+			if(++call_count_keypad == 3){
+				if(KEYPAD_Scan(&key)){
+					switch(key){
+						case 'A':
+							// Guardar
+							num = data[0] * 10 + data[1];
+							// dataCount == 3 significa que el usuario ingreso dos numeros + tecla para guardar.
+							if (dataCount == 3) {
+								if (num >= 0 && num <= 23) {
+									WATCH_setHour(num);	
+								}	
+							}
+							dataCount = 0;
+							estado = Inicio;
 						break;
 					case '#':
 						// Cancelar.
@@ -214,18 +220,18 @@ void MEF_update(){ //Update cada 100 ms
 						if(key >= '0' && key <= '9' && dataCount < 2) {
 							data[dataCount] = key;
 						}	
-				}
+					}
 				dataCount++;
+				}
 			}
-			
 			break;
-		
+				
 		case EdicionM:
-			printf("EdicionM");
+			//LCDstring("edicionM",8);
 			break;
 		
 		case EdicionS:
-			printf("EdicionS");
+			//LCDstring("edicionS",8);
 			break;
 		
 	}
